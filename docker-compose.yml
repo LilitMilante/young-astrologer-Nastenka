@@ -1,0 +1,32 @@
+version: "3.9"
+
+networks:
+  astrologer:
+
+services:
+  db:
+    container_name: astrologer-db
+    image: postgres:15.3-alpine
+    environment:
+      POSTGRES_PASSWORD: dev
+    ports:
+      - "15432:5432"
+    networks:
+      - astrologer
+    restart: always
+
+  app:
+    container_name: astrologer-app
+    build: .
+    env_file:
+      - .env
+    environment:
+      HTTP_PORT: "80"
+    ports:
+      - "18080:80"
+    networks:
+      - astrologer
+    depends_on:
+      - db
+    restart: always
+    pull_policy: always
